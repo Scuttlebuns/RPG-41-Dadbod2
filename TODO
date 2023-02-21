@@ -1,0 +1,20 @@
+Completed:
+     NOTHING
+
+Possibly done:
+     Classes
+          Actor
+	      Monster
+	      Hero
+
+TODO:
+     Create map
+	 save and load:
+	      Progress
+		  Map
+		  Actors
+	UI
+	LinkedList:
+	     Inventory
+		 Combat Order
+	Alot more...
