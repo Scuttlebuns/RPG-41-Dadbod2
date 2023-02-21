@@ -3,6 +3,8 @@
 //Delete this next line to let the code compile
 //#error Delete This!
 #include "map.h"
+#include "hero.h"
+#include "monster.h"
 #include <unistd.h>
 
 const int MAX_FPS = 90; //Cap frame rate 
