@@ -4,14 +4,29 @@
 #include <iostream>
 #include <random>
 #include <ncurses.h>
+#include "/public/read.h"
+#include <sstream>
 using namespace std; //Boo hiss
 
 class Map {
 	vector<vector<char>> map;
 	default_random_engine gen;
+	int displaySize;
+	string mapFile;
 	public:
 	//TODO: Write a getter and a setter to get/set the characters in the map
-	//TODO: Write a function to save the map and reload the map
+	//Getters:
+	char get(int x, int y) const { return map.at(y).at(x); }
+	int getDisplaySize() const { return displaySize; }
+
+	//Setters:
+	void set(int x, int y, char c){
+		map.at(y).at(x) = c;
+	}
+	void setDisplaySize(int windowSize) {
+		displaySize = windowSize;
+	}
+
 	static const char HERO     = 'H';
 	static const char MONSTER  = 'M';
 	static const char WALL     = '#';
@@ -20,41 +35,64 @@ class Map {
 	static const char TREASURE = '$';
 	static const size_t SIZE = 100; //World is a 100x100 map
 	static const size_t DISPLAY = 30; //Show a 30x30 area at a time
-	//Randomly generate map
-	void init_map() {
-		uniform_int_distribution<int> d100(1,100);
-		map.clear();
+
+	//TODO: Write a function to save the map and reload the map
+	void loadMap(){
 		map.resize(SIZE); //100 rows tall
 		for (auto &v : map) v.resize(SIZE,'.'); //100 columns wide
-		for (size_t i = 0; i < SIZE; i++) {
-			for (size_t j = 0; j < SIZE; j++) {
-				//Line the map with walls
-				if (i == 0 or j == 0 or i == SIZE-1 or j == SIZE-1) 
-					map.at(i).at(j) = WALL;
-				else if (i == SIZE/2 and j == SIZE/2) 
-					map.at(i).at(j) = HERO;
-				else {
-					//5% chance of monster
-					if (d100(gen) <= 5) {
-						map.at(i).at(j) = MONSTER;
-					}
-					else if (d100(gen) <= 3) {
-						map.at(i).at(j) = TREASURE;
-					}
-					else if (d100(gen) <= 10) { //10% each spot is wall
-						map.at(i).at(j) = WALL;
-					}
-					else if (d100(gen) <= 3) { //3% each spot is water
-						map.at(i).at(j) = WATER;
-					}
-					else if (d100(gen) <= 40) { //40% chance of water near other water
-						if (map.at(i-1).at(j) == WATER or map.at(i+1).at(j) == WATER or map.at(i).at(j-1) == WATER or map.at(i).at(j+1) == WATER)
-							map.at(i).at(j) = WATER;
-					}
-				}
+		ifstream ins(mapFile);
+		if(!ins) cerr << "Problem loading the map..." << endl;
+		for (int i = 0; i < SIZE; i++){
+			string row;
+			getline(ins, row);
+			if(!ins) break;
+			stringstream sts(row);
+			for(int j = 0; j < SIZE; j++){
+				char temp;
+				sts >> temp;
+				if(!sts) break;
+				map.at(i).at(j) = temp;
 			}
 		}
 	}
+
+	/*
+	//Randomly generate map
+	void init_map() {
+	uniform_int_distribution<int> d100(1,100);
+	map.clear();
+	map.resize(SIZE); //100 rows tall
+	for (auto &v : map) v.resize(SIZE,'.'); //100 columns wide
+	for (size_t i = 0; i < SIZE; i++) {
+	for (size_t j = 0; j < SIZE; j++) {
+	//Line the map with walls
+	if (i == 0 or j == 0 or i == SIZE-1 or j == SIZE-1) 
+	map.at(i).at(j) = WALL;
+	else if (i == SIZE/2 and j == SIZE/2) 
+	map.at(i).at(j) = HERO;
+	else {
+	//5% chance of monster
+	if (d100(gen) <= 5) {
+	map.at(i).at(j) = MONSTER;
+	}
+	else if (d100(gen) <= 3) {
+	map.at(i).at(j) = TREASURE;
+	}
+	else if (d100(gen) <= 10) { //10% each spot is wall
+	map.at(i).at(j) = WALL;
+	}
+	else if (d100(gen) <= 3) { //3% each spot is water
+	map.at(i).at(j) = WATER;
+	}
+	else if (d100(gen) <= 40) { //40% chance of water near other water
+	if (map.at(i-1).at(j) == WATER or map.at(i+1).at(j) == WATER or map.at(i).at(j-1) == WATER or map.at(i).at(j+1) == WATER)
+	map.at(i).at(j) = WATER;
+	}
+	}
+	}
+	}
+	}
+	*/
 	//Draw the DISPLAY tiles around coordinate (x,y)
 	void draw(int x, int y) {
 		int start_x = x - DISPLAY/2;
@@ -109,6 +147,9 @@ class Map {
 		}
 	}
 	Map() {
-		init_map();
+		//	init_map();
+		displaySize = 30;
+		mapFile = "map.txt";
+		loadMap();
 	}
 };
