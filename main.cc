@@ -5,6 +5,9 @@
 #include "map.h"
 #include "hero.h"
 #include "monster.h"
+#include "mealPrep.h"
+#include "ptaOverlord.h"
+#include "yodaYoga.h"
 #include <unistd.h>
 
 const int MAX_FPS = 90; //Cap frame rate 
