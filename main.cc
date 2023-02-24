@@ -21,6 +21,7 @@ const int RIGHT = 67;
 void turn_on_ncurses() {
 	initscr();//Start curses mode
 	start_color(); //Enable Colors if possible
+	init_pair(7,COLOR_BLACK,COLOR_BLACK); //Set up some color pairs
 	init_pair(1,COLOR_WHITE,COLOR_BLACK); //Set up some color pairs
 	init_pair(2,COLOR_CYAN,COLOR_BLACK);
 	init_pair(3,COLOR_GREEN,COLOR_BLACK);
@@ -42,7 +43,7 @@ void turn_off_ncurses() {
 
 int main() {
 	turn_on_ncurses(); //DON'T DO CIN or COUT WHEN NCURSES MODE IS ON
-	Map map;
+	Map map("map1.txt");
 	int x = Map::SIZE / 2, y = Map::SIZE / 2; //Start in middle of the world
 	int old_x = -1, old_y = -1;
 	while (true) {
@@ -77,18 +78,17 @@ int main() {
 		}
 		//Stop flickering by only redrawing on a change
 		if (x != old_x or y != old_y) {
-			/* Do something like this, idk 
-			if (map.get(x,y) == Map::TREASURE) {
+			// Do something like this, idk 
+			if (map.get(x,y) == Map::TREASURE_1) {
 				map.set(x,y,Map::OPEN);
-				money++;
-			} else if (map.get(x,y) == Map::WALL) {
+			} else if (map.get(x,y) == Map::WALL or map.get(x,y) == Map::WATER) {
 				x = old_x;
 				y = old_y;
 			}
-			*/
+		
 			//clear(); //Put this in if the screen is getting corrupted
 			map.draw(x,y);
-			mvprintw(Map::DISPLAY+1,0,"X: %i Y: %i\n",x,y);
+			mvprintw(map.getDisplaySize()+1,0,"X: %i Y: %i\n",x,y);
 			refresh();
 		}
 		old_x = x;

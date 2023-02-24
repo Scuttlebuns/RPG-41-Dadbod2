@@ -1,5 +1,4 @@
-#pragma once
-#include <vector>
+
 #include <string>
 #include <iostream>
 #include <random>
@@ -14,6 +13,22 @@ class Map {
 	int displaySize;
 	string mapFile;
 	public:
+	Map() {
+		//	init_map();
+		displaySize = 30;
+		mapFile = "map.txt";
+		loadMap();
+	}
+	Map(string fileName) {
+		displaySize = 30;
+		mapFile = fileName;
+		loadMap();
+	}
+	Map(string fileName, int display){
+		mapFile = fileName;
+		displaySize = display;
+		loadMap();
+	}
 	//TODO: Write a getter and a setter to get/set the characters in the map
 	//Getters:
 	char get(int x, int y) const { return map.at(y).at(x); }
@@ -27,14 +42,31 @@ class Map {
 		displaySize = windowSize;
 	}
 
+	static const char A_BOSS    = 'a';
+	static const char A_BORDER  = 'A';
+	static const char B_BOSS    = 'b';
+	static const char B_BORDER  = 'B';
+	static const char C_BOSS    = 'c';
+	static const char C_BORDER  = 'C';
+	static const char D_BOSS    = 'd';
+	static const char D_BORDER  = 'D';
+
+	static const char TREASURE_1 = '$';
+	static const char TREASURE_2 = '%';
+	static const char TREASURE_3 = '^';
+	static const char TREASURE_4 = '&';
+
+	static const char DOOR_1 = 'Q';
+	static const char DOOR_2 = 'W';
+	static const char DOOR_3 = 'E';
+
 	static const char HERO     = 'H';
-	static const char MONSTER  = 'M';
 	static const char WALL     = '#';
 	static const char WATER    = '~';
 	static const char OPEN     = '.';
-	static const char TREASURE = '$';
 	static const size_t SIZE = 100; //World is a 100x100 map
-	static const size_t DISPLAY = 30; //Show a 30x30 area at a time
+	//static const size_t DISPLAY = 30; //Show a 30x30 area at a time
+	//static const char MONSTER  = 'M';
 
 	//TODO: Write a function to save the map and reload the map
 	void loadMap(){
@@ -56,8 +88,9 @@ class Map {
 		}
 	}
 
+	
 	/*
-	//Randomly generate map
+	Randomly generate map 
 	void init_map() {
 	uniform_int_distribution<int> d100(1,100);
 	map.clear();
@@ -95,10 +128,10 @@ class Map {
 	*/
 	//Draw the DISPLAY tiles around coordinate (x,y)
 	void draw(int x, int y) {
-		int start_x = x - DISPLAY/2;
-		int end_x = x + DISPLAY/2;
-		int start_y = y - DISPLAY/2;
-		int end_y = y + DISPLAY/2;
+		int start_x = x - displaySize/2;
+		int end_x = x + displaySize/2;
+		int start_y = y - displaySize/2;
+		int end_y = y + displaySize/2;
 
 		//Bounds check to handle the edges
 		if (start_x < 0) {
@@ -122,34 +155,30 @@ class Map {
 		for (size_t i = start_y; i <= end_y; i++) {
 			for (size_t j = start_x; j <= end_x; j++) {
 				if (i == y && j == x) {
-					attron(A_UNDERLINE | A_BOLD);
+					attron(A_UNDERLINE | A_BOLD | COLOR_PAIR(3));
 					mvaddch(i-start_y,j-start_x,'H');
-					attroff(A_UNDERLINE | A_BOLD);
+					attroff(A_UNDERLINE | A_BOLD | COLOR_PAIR(3));
 				}
 				else {
 					int color = 1;
-					if (map.at(i).at(j) == WALL)
-						color = 5;
-					else if (map.at(i).at(j) == WATER)
-						color = 2;
-					else if (map.at(i).at(j) == HERO)
-						color = 3;
-					else if (map.at(i).at(j) == TREASURE)
+					char curChar = map.at(i).at(j);
+					if (curChar == WALL) color = 5;
+					else if (curChar == WATER) color = 2;
+					else if (curChar == HERO) color = 3;
+					else if (curChar == TREASURE_1 or curChar == TREASURE_2 or curChar == TREASURE_3 or curChar == TREASURE_4		
+							or curChar == DOOR_1 or curChar == DOOR_2 or curChar == DOOR_3) 
 						color = 4;
-					else if (map.at(i).at(j) == MONSTER)
+					else if (curChar == A_BORDER or curChar == A_BOSS 
+							or curChar == B_BORDER or curChar == B_BOSS 
+							or curChar == C_BORDER or curChar == C_BOSS 
+							or curChar == D_BORDER or curChar == D_BOSS)
 						color = 6;
-
+					else if (curChar == OPEN) color = 7;
 					attron(COLOR_PAIR(color));
 					mvaddch(i-start_y,j-start_x,map.at(i).at(j));
 					attroff(COLOR_PAIR(color));
 				}
 			}
 		}
-	}
-	Map() {
-		//	init_map();
-		displaySize = 30;
-		mapFile = "map.txt";
-		loadMap();
 	}
 };

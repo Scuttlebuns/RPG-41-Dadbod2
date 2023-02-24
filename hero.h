@@ -1,11 +1,14 @@
 #pragma once
 #include "actors.h"
+#include "linkedList.h"
+#include "ability.h"
 using namespace std;
 
 class Hero : public Actor{
 
 private: 
 	int specialAttack;
+	CircleLinkedList<Ability> inventory();
 
 public:
 	//Constructors
