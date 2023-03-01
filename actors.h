@@ -1,4 +1,6 @@
 #pragma once
+#include "ability.h"
+#include "linkedList.h"
 #include <string>
 #include <iostream>
 
@@ -14,6 +16,7 @@ class Actor{
 		int defense;
 
 	public:
+	CircleLinkedList<Ability> inventory;
 		//Constructors
 		Actor(string new_name = "Empty", int new_hp = 100, int new_speed = 100, int new_attack = 100, int new_defense = 100) : name(new_name), hp(new_hp), speed(new_speed), attack(new_attack), defense(new_defense) {
 			if (hp < 0) throw 42;
@@ -33,6 +36,10 @@ class Actor{
 		void setSpeed(int speed) {this->speed = speed;}
 		void setAttack(int attack) {this->attack = attack;}
 		void setDefense(int defense) {this->defense = defense;}
+
+		friend bool operator==(const Actor &lhs, const Actor &rhs) {
+			return lhs.getName() == rhs.getName();
+		}
 
 		//Output
 		friend ostream& operator<<(ostream& lhs, const Actor& rhs){

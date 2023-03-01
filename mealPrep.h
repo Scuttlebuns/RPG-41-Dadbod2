@@ -9,7 +9,7 @@ class Mealprep : public Monster{
 
 	public:
 		//Constructors
-		Mealprep(int new_plusHP = 5) : Monster(), plusHP(new_plusHP) {}
+		Mealprep(string new_name = "Empty", int new_hp = 100, int new_speed = 100, int new_attack = 100, int new_defense = 100, int new_poison = 5, int new_plusHP = 5) : Monster(new_name, new_hp, new_speed, new_attack, new_defense, new_poison), plusHP(new_plusHP) {}
 
 		//Getters
 		int getPlusHP() const {return plusHP;}

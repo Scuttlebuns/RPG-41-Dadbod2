@@ -11,20 +11,28 @@ class Map {
 	vector<vector<char>> map;
 	default_random_engine gen;
 	int displaySize;
+	int startingPointX;
+	int startingPointY;
 	string mapFile;
 	public:
 	Map() {
 		//	init_map();
+		startingPointX = -1;
+		startingPointY = -1;
 		displaySize = 30;
 		mapFile = "map.txt";
 		loadMap();
 	}
 	Map(string fileName) {
+		startingPointX = -1;
+		startingPointY = -1;
 		displaySize = 30;
 		mapFile = fileName;
 		loadMap();
 	}
 	Map(string fileName, int display){
+		startingPointX = -1;
+		startingPointY = -1;
 		mapFile = fileName;
 		displaySize = display;
 		loadMap();
@@ -34,6 +42,9 @@ class Map {
 	char get(int x, int y) const { return map.at(y).at(x); }
 	int getDisplaySize() const { return displaySize; }
 
+	int getStartingPointX() const {return startingPointX; }
+	int getStartingPointY() const {return startingPointY; }
+
 	//Setters:
 	void set(int x, int y, char c){
 		map.at(y).at(x) = c;
@@ -41,6 +52,11 @@ class Map {
 	void setDisplaySize(int windowSize) {
 		displaySize = windowSize;
 	}
+	void setStartingPoint(int x , int y){
+		startingPointX = x;
+		startingPointY = y;
+	}
+
 
 	static const char A_BOSS    = 'a';
 	static const char A_BORDER  = 'A';
@@ -83,9 +99,25 @@ class Map {
 				char temp;
 				sts >> temp;
 				if(!sts) break;
+				if (temp == '*') this->setStartingPoint(j,i);
 				map.at(i).at(j) = temp;
 			}
 		}
+		if(startingPointX == -1 and startingPointY == -1) this->setStartingPoint(SIZE/2,SIZE/2);
+	}
+
+	void saveMap(int saveSlot) const {
+		string saveFile = "saveSlot" + to_string(saveSlot) + "/map.txt";
+		ofstream outs(saveFile);	
+		if(!outs) cerr << "Problem saving map" << endl;
+
+		for(int i = 0; i < SIZE; i++){
+			for(int j = 0; j < SIZE; j++){
+				outs << map.at(i).at(j);
+			}								
+			outs << "\n";
+		}
+		outs.close();
 	}
 
 	

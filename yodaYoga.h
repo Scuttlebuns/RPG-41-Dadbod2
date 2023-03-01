@@ -9,7 +9,7 @@ class YodaYoga : public PtaOverlord{
 		//increase speed? chance of missing attack
 	public:
 		//Constructors
-		YodaYoga(int new_yoga = 5) : PtaOverlord(), yoga(new_yoga) {}
+		YodaYoga(string new_name = "Empty",int new_hp = 100, int new_speed = 100, int new_attack = 100, int new_defense = 100, int new_poison = 5, int new_plusHP = 10, int new_talk = 5, int new_yoga = 5) : PtaOverlord(new_name, new_hp, new_speed, new_attack, new_defense, new_poison, new_plusHP, new_talk), yoga(new_yoga) {}
 
 		//Getters
 		int getyoga() const {return yoga;}

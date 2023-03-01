@@ -7,6 +7,7 @@ class Ability {
 	string name;
 	int successRateBuff;
 	int cooldownTurns;
+	int turnsRemaining;
 	float damageBuff;
 
 	public:
@@ -15,6 +16,7 @@ class Ability {
 	Ability(string name, int cooldownTurns, int successRateBuff) {
 		this->name = name;
 		this->cooldownTurns = cooldownTurns;
+		this->turnsRemaining = cooldownTurns;
 		this->successRateBuff = successRateBuff;
 		this->damageBuff = 0.0f;
 	}
@@ -22,15 +24,21 @@ class Ability {
 	//Getters
 	string getName() const { return name; }
 	int getCooldownTurns() const { return cooldownTurns; }
+	int getTurnsRemaing() const {return turnsRemaining;}
 	int getSuccessRateBuff() const { return successRateBuff; }
 	int getDamageBuff() const { return damageBuff; }
 
 	//Setters
 	void setName(string name) { this->name = name; }
 	void setCooldownTurns(int cooldownTurns) { this->cooldownTurns = cooldownTurns; }
+	void setTurnsRemain(int turnsRemaining) { this->turnsRemaining = turnsRemaining; }
 	void setSuccessRateBuff(int successRateBuff) { this->successRateBuff = successRateBuff; }
 
 	//Returns damage modifier
+	void resetTurnsRemaing(){
+		turnsRemaining = cooldownTurns;
+	}
+
 	void getAttackVal(int attack, int defense) {
 		uniform_int_distribution<int> d100(1,100);
 
@@ -47,8 +55,8 @@ class Ability {
 		return baseDamage * damageBuff;
 	}
 
-	int calculateDamage(int baseDamage, int attack, int damage) {
-		getAttackVal(attack, damage);
+	int calculateDamage(int baseDamage, int attack, int defense) {
+		getAttackVal(attack, defense);
 		return baseDamage * damageBuff;
 	}
 };

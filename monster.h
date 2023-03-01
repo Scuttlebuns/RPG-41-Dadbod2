@@ -9,7 +9,7 @@ private:
 
 public:
 	//Constructors
-	Monster(int new_poison = 5) : Actor(), poison(new_poison) {}
+	Monster(string new_name = "Empty", int new_hp = 100, int new_speed = 100, int new_attack = 100, int new_defense = 100, int new_poison = 5) : Actor(new_name, new_hp, new_speed, new_attack, new_defense), poison(new_poison) {}
 
 	//Getters
 	int getPoison() const {return poison;}

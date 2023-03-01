@@ -9,7 +9,7 @@ class PtaOverlord : public Mealprep{
 		//Has the chance to bore dadbod skipping attack turn
 	public:
 		//Constructors
-		PtaOverlord(int new_talk = 5) : Mealprep(), talk(new_talk) {}
+		PtaOverlord(string new_name = "Empty", int new_hp = 100, int new_speed = 100, int new_attack = 100, int new_defense = 100, int new_poison = 5, int new_plusHP = 10, int new_talk = 5) : Mealprep(new_name, new_hp, new_speed, new_attack, new_defense, new_poison, new_plusHP), talk(new_talk) {}
 
 		//Getters
 		int gettalk() const {return talk;}

@@ -1,4 +1,6 @@
+#pragma once
 #include <memory>
+#include <iostream>
 using namespace std;
 
 template<typename T>
@@ -15,11 +17,35 @@ class CircleLinkedList {
 
 		shared_ptr<Node> head;
 		shared_ptr<Node> tail;
+		shared_ptr<Node> current;
 		int size;
 	public:
-		CircleLinkedList() : head(nullptr), tail(nullptr), size(0) {}
+		CircleLinkedList() : head(nullptr), tail(nullptr),current(nullptr), size(0) {}
 		~CircleLinkedList() {
 			clear();
+		}
+
+		T& at(shared_ptr<Node> node) {
+			if (!node) {
+				cerr << "Node doesn't exist" << endl;	
+			}
+			auto currNode = head;
+			while (currNode != node && currNode != tail) {
+				currNode = currNode->next;
+			}
+			if (currNode == node) {
+				return currNode->data;
+			}
+			cerr << "Node not found in list" << endl;
+		}
+		
+		shared_ptr<Node> getCurrent() const { return current; }
+		shared_ptr<Node> getHead() const { return head; }
+		shared_ptr<Node> getTail() const { return tail; }
+		int getSize() const { return size; }
+
+		void setCurrent(shared_ptr<Node> toChange, T new_data) {
+			toChange->data = new_data;
 		}
 
 		void push_back(T val) {
@@ -37,6 +63,7 @@ class CircleLinkedList {
 				tail = newNode;
 			}
 			size++;
+			current = newNode;
 		}
 
 		void remove(T val) {
@@ -63,6 +90,9 @@ class CircleLinkedList {
 					currNode->prev->next = currNode->next;
 					currNode->next->prev = currNode->prev;
 				}
+				if(currNode == current){
+					current = current->next;
+				}
 				size--;
 			}
 		}
@@ -72,11 +102,23 @@ class CircleLinkedList {
 				head = head->next;
 				size--;
 			}
-			head = tail = nullptr;
+			head = tail = current = nullptr;
 		}
 
 		bool empty() const {
 			return size == 0;
 		}
-};
+		bool contains(T dataSearch){
+			shared_ptr<Node> curr = head;
+			while (curr->next != head){
+				cerr << *curr->data << endl;
+				cerr << *dataSearch << endl;
+				if (curr->data == dataSearch){
+					return true;
+				}
+				curr = curr->next;
+			}
+			return false;
+		}
 
+};
