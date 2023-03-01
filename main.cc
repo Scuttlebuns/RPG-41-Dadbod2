@@ -49,6 +49,7 @@ void saveGame(const Map &map) {
 		mvprintw(0,0, "What save slot would you like to use? Press 1, 2, or 3");
 		timeout(5000);
 		int ch = getch();
+		ch -= 48;
 
 		if (ch < 1 or ch > 3) {
 			mvprintw(1,0, "Please try again...");
@@ -57,6 +58,7 @@ void saveGame(const Map &map) {
 			map.saveMap(ch);
 			mvprintw(1,0, "Map Saved to slot %i:", ch);
 			usleep(2'500'000);
+			clear();
 			break;
 		}
 	}
@@ -95,9 +97,8 @@ int main() {
 		int ch = getch(); // Wait for user input, with TIMEOUT delay
 		if (ch == 'q' || ch == 'Q') break;
 		else if (ch == 's' || ch == 'S'){
-			map.saveMap(1);
+			saveGame(map);
 			mvprintw(map.getDisplaySize()+2,0,"Map Saved");
-			usleep(2'500'000);
 		}
 		else if (ch == RIGHT) {
 			x++;
