@@ -1,9 +1,10 @@
-//Put your name(s) here:
-//What bullet points did you do:
+//Put your name(s) here: Sayre, Voss, Heins
+//What bullet points did you do: Map, Linked List, Inheritance, Combat, class design, (all but bridges // partial save state/ load)
+//Our music
+//https://youtu.be/HZk5zUBJGSo
 //Delete this next line to let the code compile
 //#error Delete This!
 
-#include "map.h"
 #include "hero.h"
 #include "monster.h"
 #include "mealPrep.h"
@@ -12,14 +13,10 @@
 #include "joke_db.h"
 #include "menus.h"
 #include "combat.h"
+#include "combat2.h"
+#include "combat3.h"
+#include "podRace.h"
 #include <unistd.h>
-
-const int MAX_FPS = 90; //Cap frame rate 
-const unsigned int TIMEOUT = 10; //Milliseconds to wait for a getch to finish
-const int UP = 65; //Key code for up arrow
-const int DOWN = 66;
-const int LEFT = 68;
-const int RIGHT = 67;
 
 //Turns on full screen text mode
 void turn_on_ncurses() {
@@ -50,7 +47,7 @@ void saveGame(const Map &map) {
 	while (true) {
 		refresh();
 		mvprintw(0,0, "What save slot would you like to use? Press 1, 2, or 3");
-		timeout(0);
+		timeout(5000);
 		int ch = getch();
 
 		if (ch < 1 or ch > 3) {
@@ -67,21 +64,13 @@ void saveGame(const Map &map) {
 }
 
 int main() {
-	loadJokes();
+	Interaction terminal;
 	turn_on_ncurses(); //DON'T DO CIN or COUT WHEN NCURSES MODE IS ON
+	centerDisplay("Welcome to Dad Bod 2, Rated M for mature.", 4);
+	centerDisplay("All Jokes are just that... Jokes. Be prepared for some spice in your life.", 6);
 	Hero dadbod("Dad Bod", 150, 55, 60, 60, 10);
 	//cerr << "dadbod.inventory: " << dadbod.inventory.getHead()->data.getName() << endl;
-	Ability one("Joke", 0, 55);
-	Ability two("TV Remote Lightsaber", 5, 55);
-	Ability three("Busch Keg Blaster", 3, 55);
-	Ability four("Foam Finger Flame Thrower", 2, 55);
-	dadbod.inventory.push_back(one);
-	dadbod.inventory.push_back(two);
-	dadbod.inventory.push_back(three);
-	dadbod.inventory.push_back(four);
 	
-	refresh();
-	return combat1(dadbod);
 	//cerr << "1." << endl;
 	bool door1Open = false;
 	bool door2Open = false;
@@ -94,13 +83,14 @@ int main() {
 	//printBorder();
 	//cerr << "3." << endl;
 	loadJokes();
-	Map map("map1.txt");
+	/* Map map((terminal.getTermSizeY() - 5), "map1.txt"); */
+	Map map;
 	int x = map.getStartingPointX(), y = map.getStartingPointY(); //Start in middle of the world
 	int old_x = -1, old_y = -1;
-	/* Ability one("Joke", 0, 55); */
-	/* Ability two("TV Remote Lightsaber", 5, 55); */
-	/* Ability three("Busch Keg Blaster", 3, 55); */
-	/* Ability four("Foam Finger Flame Thrower", 2, 55); */
+	Ability one("Joke", 0, 55);
+	Ability two("TV Remote Lightsaber", 5, 55);
+	Ability three("Busch Keg Blaster", 3, 55);
+	Ability four("Foam Finger Flame Thrower", 2, 55);
 	while (true) {
 		int ch = getch(); // Wait for user input, with TIMEOUT delay
 		if (ch == 'q' || ch == 'Q') break;
@@ -164,6 +154,42 @@ int main() {
 				centerDisplay("We are just making shit up at this point. Here's a Foam Finger Flame Thrower.", 7);
 				bossADoor = true;
 			} 
+			else if (map.get(x,y) == Map::A_BOSS) {
+				map.set(x,y, Map::OPEN);
+				bool combat = combat1(dadbod);
+				if (combat) centerDisplay("Well done...you made it through the first boss...", 7);
+				else {
+					centerDisplay("Well f*ck...guess you gotta start all over again.", 7);
+					break;
+				}
+				bossBDoor = true;
+			}
+			else if (map.get(x,y) == Map::B_BOSS) {
+				map.set(x,y, Map::OPEN);
+				bool combat = combat2(dadbod);
+				if (combat) centerDisplay("Well...now you think you are tough shit now getting through two bosses...we shall see...", 7);
+				else {
+					centerDisplay("Well f*ck...guess you gotta start all over again.", 7);
+					break;
+				}
+				bossCDoor = true;
+			}
+			else if (map.get(x,y) == Map::C_BOSS) {
+				map.set(x,y, Map::OPEN);
+				bool combat = combat3(dadbod);
+				if (combat) centerDisplay("Well done...you made it through the Third boss...", 7);
+				else {
+					centerDisplay("Well f*ck...guess you gotta start all over again.", 7);
+					break;
+				}
+				bossDDoor = true;
+			}
+			else if (map.get(x,y) == Map::D_BOSS) {
+				bool race = podRace();
+				if (race) break;
+				else break;
+			}
+
 			else if ((map.get(x,y) == Map::DOOR_1 and !door1Open) or (map.get(x,y) == Map::DOOR_2 and !door2Open) or (map.get(x,y) == Map::DOOR_3 and !door3Open)){
 				x = old_x;
 				y = old_y;
@@ -174,8 +200,6 @@ int main() {
 				y = old_y;
 				centerDisplay("TF you think this is... Elden Ring?! The bosses come AFTER your lazy ass does something useful... Go away and try again!",5,5);
 			}
-
-			
 			else if (map.get(x,y) == Map::WALL or map.get(x,y) == Map::WATER) {
 				x = old_x;
 				y = old_y;

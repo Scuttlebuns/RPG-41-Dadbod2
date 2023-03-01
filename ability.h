@@ -24,7 +24,7 @@ class Ability {
 	//Getters
 	string getName() const { return name; }
 	int getCooldownTurns() const { return cooldownTurns; }
-	int getTurnsRemaing() const {return turnsRemaining;}
+	int getTurnsRemaining() const {return turnsRemaining;}
 	int getSuccessRateBuff() const { return successRateBuff; }
 	int getDamageBuff() const { return damageBuff; }
 
@@ -35,7 +35,7 @@ class Ability {
 	void setSuccessRateBuff(int successRateBuff) { this->successRateBuff = successRateBuff; }
 
 	//Returns damage modifier
-	void resetTurnsRemaing(){
+	void resetTurnsRemaining(){
 		turnsRemaining = cooldownTurns;
 	}
 

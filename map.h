@@ -20,7 +20,7 @@ class Map {
 		startingPointX = -1;
 		startingPointY = -1;
 		displaySize = 30;
-		mapFile = "map.txt";
+		mapFile = "map1.txt";
 		loadMap();
 	}
 	Map(string fileName) {
@@ -30,7 +30,7 @@ class Map {
 		mapFile = fileName;
 		loadMap();
 	}
-	Map(string fileName, int display){
+	Map(int display, string fileName = "map1.txt"){
 		startingPointX = -1;
 		startingPointY = -1;
 		mapFile = fileName;

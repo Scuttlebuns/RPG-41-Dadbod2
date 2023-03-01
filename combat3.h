@@ -10,39 +10,43 @@
 #include <algorithm>
 using namespace std;
 
-CircleLinkedList<shared_ptr<Actor>> combatLoop;
+CircleLinkedList<shared_ptr<Actor>> combatLoop3;
 
-void combatSetup1(Hero &hero){
+void combatSetup3(Hero &hero){
 	vector<shared_ptr<Actor>> turnOrder;
 	Ability baseMonster("Scratch", 0, 75);
 	Ability bossAttack("Vegan Screech", 3, 60);
-	Monster monster1("Water Simp", 50, 50, 30, 20, 5);
+	Ability bossAttack2("Clipboard Bash", 3, 60);
+	Ability bossAttack3("Not the Force", 3, 60);
+	Monster monster1("Droid Simp", 50, 50, 30, 20, 5);
 	monster1.inventory.push_back(baseMonster);
-	Monster monster2("Fire Simp", 50, 40, 30, 20, 5);
+	Monster monster2("Stormtrooper Simp", 50, 40, 30, 20, 5);
 	monster2.inventory.push_back(baseMonster);
-	Mealprep boss("The Vegan Teacher", 100, 20, 55, 40, 10, 10);
+	YodaYoga boss("Yoga Yoda", 100, 20, 55, 40, 10, 10);
 	boss.inventory.push_back(baseMonster);
 	boss.inventory.push_back(bossAttack);
+	boss.inventory.push_back(bossAttack2);
+	boss.inventory.push_back(bossAttack3);
 
 	turnOrder.push_back(make_shared<Monster>(monster1));
 	turnOrder.push_back(make_shared<Monster>(monster2));
-	turnOrder.push_back(make_shared<Mealprep>(boss));
+	turnOrder.push_back(make_shared<YodaYoga>(boss));
 	turnOrder.push_back(make_shared<Hero>(hero));
 
 	sort(turnOrder.rbegin(),turnOrder.rend(), [](shared_ptr<Actor> a, shared_ptr<Actor> b){ return a->getSpeed() < b->getSpeed(); });
 
 	for (auto x : turnOrder) {
-		combatLoop.push_back(x);
+		combatLoop3.push_back(x);
 	}
 }
 
-void combatDisplay(int textColor = 3){
+void combatDisplay3(int textColor = 3){
 	Interaction full;
 	clear();
 	printBorder(textColor, 0, 0, 100, 100);
 	string toPrint = "Turn order: ";
-	auto currNode = combatLoop.getHead();
-	for (int i = 1; i <= combatLoop.getSize(); i++) {
+	auto currNode = combatLoop3.getHead();
+	for (int i = 1; i <= combatLoop3.getSize(); i++) {
 		toPrint += to_string(i);
 		toPrint += ") ";
 		toPrint += currNode->data->getName();
@@ -58,7 +62,7 @@ void combatDisplay(int textColor = 3){
 	refresh();
 }
 
-void printAbility(Hero &hero, int textColor = 3){
+void printAbility3(Hero &hero, int textColor = 3){
 	Interaction full;
 	/* clear(); */
 	printBorder(textColor, 0, 0, 100, 100);
@@ -81,28 +85,28 @@ void printAbility(Hero &hero, int textColor = 3){
 	refresh();
 }
 
-bool combat1(Hero &hero){
+bool combat3(Hero &hero){
 	Interaction full;
-	combatSetup1(hero);
-	centerDisplay("Alight, guys, we've got a real clusterf*ck of a situation here...", 5);
-	centerDisplay("We've got the Vegan Teacher, a water simp, and a fire simp all teaming up against ya' boy, Dad Bod.", 5);
-	centerDisplay("And let me tell you, these guys are no joke. The Vegan teacher has got some serious plant-based powers. Also, I have no idea what a simp is.", 5);
-	auto currNode = combatLoop.getHead();
-	auto heroNode = combatLoop.getHead();
+	combatSetup3(hero);
+	centerDisplay("*burp* Morty, Dadbod, whoever the hell you are.. Theres a little green muppet with a glowstick, kick him or somethin'", 8);
+	centerDisplay("Kermit may have the flexibility of a Yoga master but Dad Bod has the resilience of one whose had too many beers. ", 8);
+	centerDisplay("Go fight, why are you still here? Jeez these cut scenes kinda suck. You should have started this project ealier.", 8);
+	auto currNode = combatLoop3.getHead();
+	auto heroNode = combatLoop3.getHead();
 	while (true) {
 		if(heroNode->data->getName() == hero.getName()) break; 
 		heroNode = heroNode->next;
 	}
 	while(true) {
 		if (heroNode->data->getHP() < 0) return false;
-		if (combatLoop.getSize() < 2 and heroNode->data->getHP() > 0) return true;
+		if (combatLoop3.getSize() < 2 and heroNode->data->getHP() > 0) return true;
 		/* cerr << "Inside loop" << endl; */
 		/* return true; */
-		combatDisplay();
+		combatDisplay3();
 		if (currNode->data->getName() == hero.getName()) {
 			/* cerr << "after == " << endl; */
 			/* return 0; */
-			printAbility(hero);
+			printAbility3(hero);
 			string toPrint = "Select Enemy To Attack Then Ablility To Use.... You Have 5 Seconds, Go.";
 			attron(COLOR_PAIR(4));
 			mvprintw((full.getTermSizeY() - 2) - 1,(full.getTermSizeX() - toPrint.length()) / 2, toPrint.c_str());
@@ -111,9 +115,9 @@ bool combat1(Hero &hero){
 			timeout(5000);
 			int mch = getch();
 			mch -= 48;
-			auto attackeeNode = combatLoop.getHead();
-			if(!(mch <= 0 or mch > combatLoop.getSize())) {
-				auto attackeeNodeChoice = combatLoop.getHead();
+			auto attackeeNode = combatLoop3.getHead();
+			if(!(mch <= 0 or mch > combatLoop3.getSize())) {
+				auto attackeeNodeChoice = combatLoop3.getHead();
 				for (int i = 1; i < mch; i++) {
 					attackeeNodeChoice = attackeeNodeChoice->next;
 				}
@@ -148,7 +152,7 @@ bool combat1(Hero &hero){
 					attackeeNode->data->setHP(attackeeNode->data->getHP() - abilityChoice->data.calculateDamage(hero.getAttack(), hero.getAttack(), attackeeNode->data->getDefense()));
 					centerDisplayNoClear(randomJoke(), 5, 2);
 					if (attackeeNode->data->getHP() < 0){
-						combatLoop.remove(attackeeNode->data);
+						combatLoop3.remove(attackeeNode->data);
 					}
 					abilityChoice->data.resetTurnsRemaining();
 					break;
@@ -178,7 +182,7 @@ bool combat1(Hero &hero){
 
 				heroNode->data->setHP(heroNode->data->getHP() - abilityChoice->data.calculateDamage(hero.getAttack(), currNode->data->getAttack(), heroNode->data->getDefense()));
 				abilityChoice->data.resetTurnsRemaining();
-				centerDisplayNoClear("Vegan Teacher and Simps attacking.",5, 2);
+				centerDisplayNoClear("Yoga Yoda and his Starwars ripoffs are attacking.",5, 2);
 			}	
 
 		}
