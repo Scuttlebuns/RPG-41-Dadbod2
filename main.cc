@@ -42,6 +42,63 @@ void turn_off_ncurses() {
 	if (system("clear")) {}
 }
 
+bool door1Open = false;
+bool door2Open = false;
+bool door3Open = false;
+bool bossADoor = false;
+bool bossBDoor = false;
+bool bossCDoor = false;
+bool bossDDoor = false;
+
+bool hasAbilityOne = false;
+bool hasAbilityTwo = false;
+bool hasAbilityThree = false;
+bool hasAbilityFour = false;
+
+string mapFileToLoad = "map1.txt";
+
+void saveBools(int saveSlot) {
+	string saveFile = "saveSlot" + to_string(saveSlot) + "/bools.txt";
+	ofstream outs(saveFile);	
+	if(!outs) cerr << "Problem saving bools" << endl;
+
+
+	outs << door1Open;
+	outs << door2Open;
+	outs << door3Open;
+	outs << bossADoor;
+	outs << bossBDoor;
+	outs << bossCDoor;
+	outs << bossDDoor;
+	outs << hasAbilityOne;
+	outs << hasAbilityTwo;
+	outs << hasAbilityThree;
+	outs << hasAbilityFour;
+
+	outs.close();
+}
+
+void loadBools(int saveSlot) {
+	string saveFile = "saveSlot" + to_string(saveSlot) + "/bools.txt";
+	ifstream ins(saveFile);	
+	if(!ins) cerr << "Problem saving bools" << endl;
+
+
+	ins >> door1Open;
+	ins >> door2Open;
+	ins >> door3Open;
+	ins >> bossADoor;
+	ins >> bossBDoor;
+	ins >> bossCDoor;
+	ins >> bossDDoor;
+	ins >> hasAbilityOne;
+	ins >> hasAbilityTwo;
+	ins >> hasAbilityThree;
+	ins >> hasAbilityFour;
+
+	ins.close();
+}
+
 
 void saveGame(const Map &map) {
 	while (true) {
@@ -56,10 +113,50 @@ void saveGame(const Map &map) {
 			usleep(2'500'000);
 		} else {
 			map.saveMap(ch);
-			mvprintw(1,0, "Map Saved to slot %i:", ch);
+			saveBools(ch);
+			mvprintw(1,0, "Game Saved to slot %i:", ch);
 			usleep(2'500'000);
 			clear();
 			break;
+		}
+	}
+	timeout(TIMEOUT); //Set a max delay for key entry
+}
+
+void loadGame() {
+	while (true) {
+		refresh();
+		centerDisplay("Would you like to 1) Start a new game or 2) Load from a save slot", 5);
+		refresh();
+		timeout(5000);
+		int ch2 = getch();
+		ch2 -= 48;
+
+		if (ch2 < 1 or ch2 > 2) {
+			centerDisplay("Please try again!");
+			continue;
+		} else if (ch2 == 1) return; 
+		else {
+			while (true) {
+				refresh();
+				mvprintw(0,0, "What save slot would you like to use? Press 1, 2, or 3");
+				timeout(5000);
+				int ch = getch();
+				ch -= 48;
+
+				if (ch < 1 or ch > 3) {
+					mvprintw(1,0, "Please try again...");
+					usleep(2'500'000);
+					continue;
+				} else {
+					mapFileToLoad =  "saveSlot" + to_string(ch) + "/map.txt";
+					loadBools(ch);
+					mvprintw(1,0, "Game loaded from slot %i:", ch);
+					usleep(2'500'000);
+					clear();
+					return;
+				}
+			}
 		}
 	}
 	timeout(TIMEOUT); //Set a max delay for key entry
@@ -70,29 +167,26 @@ int main() {
 	turn_on_ncurses(); //DON'T DO CIN or COUT WHEN NCURSES MODE IS ON
 	centerDisplay("Welcome to Dad Bod 2, Rated M for mature.", 4);
 	centerDisplay("All Jokes are just that... Jokes. Be prepared for some spice in your life.", 6);
+	loadGame();
 	Hero dadbod("Dad Bod", 150, 55, 60, 60, 10);
+	Ability one("Joke", 0, 55);
+	Ability two("TV Remote Lightsaber", 5, 55);
+	Ability three("Busch Keg Blaster", 3, 55);
+	Ability four("Foam Finger Flame Thrower", 2, 55);
 	//cerr << "dadbod.inventory: " << dadbod.inventory.getHead()->data.getName() << endl;
-	
+	if (hasAbilityOne) dadbod.inventory.push_back(one);
+	if (hasAbilityTwo) dadbod.inventory.push_back(two);
+	if (hasAbilityThree) dadbod.inventory.push_back(three);
+	if (hasAbilityFour) dadbod.inventory.push_back(four);
 	//cerr << "1." << endl;
-	bool door1Open = false;
-	bool door2Open = false;
-	bool door3Open = false;
-	bool bossADoor = false;
-	bool bossBDoor = false;
-	bool bossCDoor = false;
-	bool bossDDoor = false;
 	//cerr << "2." << endl;
 	//printBorder();
 	//cerr << "3." << endl;
 	loadJokes();
 	/* Map map((terminal.getTermSizeY() - 5), "map1.txt"); */
-	Map map;
+	Map map(mapFileToLoad);
 	int x = map.getStartingPointX(), y = map.getStartingPointY(); //Start in middle of the world
 	int old_x = -1, old_y = -1;
-	Ability one("Joke", 0, 55);
-	Ability two("TV Remote Lightsaber", 5, 55);
-	Ability three("Busch Keg Blaster", 3, 55);
-	Ability four("Foam Finger Flame Thrower", 2, 55);
 	while (true) {
 		int ch = getch(); // Wait for user input, with TIMEOUT delay
 		if (ch == 'q' || ch == 'Q') break;
@@ -110,13 +204,13 @@ int main() {
 		}
 		else if (ch == UP) {
 			/* If you want to do cin and cout, turn off ncurses, do your thing, then turn it back on
-			turn_off_ncurses();
-			string s;
-			cin >> s;
-			cout << s << endl;
-			sleep(1);
-			turn_on_ncurses();
-			*/
+			   turn_off_ncurses();
+			   string s;
+			   cin >> s;
+			   cout << s << endl;
+			   sleep(1);
+			   turn_on_ncurses();
+			   */
 			y--;
 			if (y < 0) y = 0;
 		}
@@ -205,7 +299,7 @@ int main() {
 				x = old_x;
 				y = old_y;
 			}
-		
+
 			//clear(); //Put this in if the screen is getting corrupted
 			map.draw(x,y);
 			mvprintw(map.getDisplaySize()+1,0,"X: %i Y: %i\n",x,y);
